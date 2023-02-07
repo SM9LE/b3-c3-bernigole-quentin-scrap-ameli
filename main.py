@@ -34,3 +34,11 @@ for medecin in medecins[:50]:
     adresseMedecins = medecin.find("div", class_="adresse").text.strip()
     listeMedecins.append({"nom": nomMedecins, "numero": numeroMedecins, "adresse": adresseMedecins})
 
+# Création du fichier csv "medecins_generalistes.csv"
+en_tete = ['nom', 'numero', 'adresse']
+with open('medecins_generalistes.csv', 'r+') as fichier_csv:
+    writer = csv.DictWriter(fichier_csv, fieldnames=listeMedecins[0].keys(), delimiter=";")
+    writer.writeheader()
+    writer.writerows(listeMedecins)
+
+print(listeMedecins)
