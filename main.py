@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import csv
+import pandas as pd
 
 url = "http://annuairesante.ameli.fr/recherche.html"
 header = {
@@ -27,18 +28,27 @@ medecins = soup.find_all("div", class_="item-professionnel")
 
 listeMedecins = []
 
-for medecin in medecins[:50]:
-    nomMedecins = medecin.find("div", class_="nom_pictos").text.strip()
-    if medecin.find("div", class_="tel") is not None:
-        numeroMedecins = medecin.find("div", class_="tel").text.strip()
-    adresseMedecins = medecin.find("div", class_="adresse").text.strip()
-    listeMedecins.append({"nom": nomMedecins, "numero": numeroMedecins, "adresse": adresseMedecins})
+for i in range(1001):
+    for medecin in medecins[:70]:
+        nomMedecins = medecin.find("div", class_="nom_pictos").text.strip()
+        numeroMedecins = None
+        if medecin.find("div", class_="tel") is not None:
+            numeroMedecins = medecin.find("div", class_="tel").text.strip()
+        adresseMedecins = medecin.find("div", class_="adresse").text.strip()
+        listeMedecins.append({"nom": nomMedecins, "numero": numeroMedecins, "adresse": adresseMedecins})
 
 # Création du fichier csv "medecins_generalistes.csv"
-en_tete = ['nom', 'numero', 'adresse']
-with open('medecins_generalistes.csv', 'r+') as fichier_csv:
+with open('medecins_generalistes.csv', 'w+') as fichier_csv:
     writer = csv.DictWriter(fichier_csv, fieldnames=listeMedecins[0].keys(), delimiter=";")
     writer.writeheader()
     writer.writerows(listeMedecins)
 
+############
+# Malheureusement une erreur Traceback apparait, je ne peux pas faire la fin de l'exercice, malgré les recherches et votre intervention.
+#relectureFichierCSV = pd.read_csv('medecins_generalistes.csv')
+#relectureFichierCSV.head()
+#relectureFichierCSV.columns()
+#duplicateRows = relectureFichierCSV[relectureFichierCSV.duplicated(['nom'])]
+#nouveauResultat = relectureFichierCSV.drop_duplicates(keep=False)
+############
 print(listeMedecins)
