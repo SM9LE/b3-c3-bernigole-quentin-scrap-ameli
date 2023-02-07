@@ -23,39 +23,14 @@ if page.status_code == 200:
 
 soup = BeautifulSoup(page.text, 'html.parser')
 
-# Récupérer tous les noms des médecins
-classe_noms = "ignore-css"
-tousLesNoms = soup.find_all("h2", class_=classe_noms)
-noms = []
-for nom in tousLesNoms:
-    noms.append(nom.string)
-    print(nom)
+medecins = soup.find_all("div", class_="item-professionnel")
 
-print(soup)
+listeMedecins = []
 
-# Récupérer tous les numéros des médecins
-classe_numeros = "item.left.tel"
-tousLesNums = soup.find_all("div", class_=classe_numeros)
-numeros = []
-for numero in tousLesNums:
-    numeros.append(numero.string)
-    print(numero)
+for medecin in medecins[:50]:
+    nomMedecins = medecin.find("div", class_="nom_pictos").text.strip()
+    if medecin.find("div", class_="tel") is not None:
+        numeroMedecins = medecin.find("div", class_="tel").text.strip()
+    adresseMedecins = medecin.find("div", class_="adresse").text.strip()
+    listeMedecins.append({"nom": nomMedecins, "numero": numeroMedecins, "adresse": adresseMedecins})
 
-print('--------------------------')
-
-# Récupérer toutes les adresses des médecins
-classe_adresses = "item.left.adresse"
-toutesLesAddresses = soup.find_all("div", class_=classe_adresses)
-adresses = []
-for adresse in toutesLesAddresses:
-    adresses.append(adresse.string)
-
-print('--------------------------')
-
-# Création du fichier csv "medecins_generalistes.csv"
-en_tete = ['nom', 'numero', 'adresse']
-with open('medecins_generalistes.csv') as fichier_csv:
-    writer = csv.writer(fichier_csv, delimiter=";")
-    writer.writerow(en_tete)
-    for nom, numero, adresse in zip(noms, numeros, adresses):
-        writer.writerow([nom, numero, adresse])
